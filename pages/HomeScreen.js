@@ -1,44 +1,17 @@
-import React, { useEffect } from 'react';
+import React, {useContext, useEffect} from 'react';
 import { View, Text, SafeAreaView } from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
 import Mybutton from './components/Mybutton';
 import Mytext from './components/Mytext';
+import {UserContext} from './components/UserContext';
 
-const db = openDatabase({ name: 'FuncDatabase.db' });
+const db = openDatabase({ name: 'UserDatabase.db' });
 
 const HomeScreen = ({ navigation }) => {
-  useEffect(() => {
-    db.transaction((txn) => {
-      txn.executeSql(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='table_func'",
-        [],
-        (tx, res) => {
-          console.log('item:', res.rows.length);
-          if (res.rows.length === 0) {
-            txn.executeSql('DROP TABLE IF EXISTS table_func', []);
-            txn.executeSql(
-              'CREATE TABLE IF NOT EXISTS table_func(func_id INTEGER PRIMARY KEY AUTOINCREMENT, func_name VARCHAR(20), func_contact INT(10), func_address VARCHAR(255))',
-              [],
-            );
-          }
-        },
-      );
-      txn.executeSql(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='table_users'",
-        [],
-        (tx, res) => {
-          console.log('item:', res.rows.length);
-          if (res.rows.length === 0) {
-            txn.executeSql('DROP TABLE IF EXISTS table_users', []);
-            txn.executeSql(
-              'CREATE TABLE IF NOT EXISTS table_users(user_id INTEGER PRIMARY KEY AUTOINCREMENT, user_name VARCHAR(20), user_email VARCHAR(255), user_password VARCHAR(255))',
-              [],
-            );
-          }
-        },
-      );
-    });
-  }, []);
+
+
+  const uid = useContext(UserContext);
+
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

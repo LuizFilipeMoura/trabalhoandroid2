@@ -32,7 +32,7 @@ const DeletarFunc = ({ navigation }) => {
               { cancelable: false },
             );
           } else {
-            alert('Please insert a valid Func Id');
+            alert('Por favor, coloque uma Id válida ');
           }
         },
       );
@@ -44,17 +44,14 @@ const DeletarFunc = ({ navigation }) => {
       <View style={{ flex: 1, backgroundColor: 'white' }}>
         <View style={{ flex: 1 }}>
           <Mytextinput
-            placeholder="Enter Func Id"
-            onChangeText={(inputFuncId) => setInputFuncId(inputFuncId)}
+            placeholder="Id do funcionário"
+            onChangeText={(e) => setInputFuncId(e)}
             style={{ padding: 10 }}
           />
           <Mybutton title="Delete Func" customClick={deleteFunc} />
         </View>
         <Text style={{ fontSize: 18, textAlign: 'center', color: 'grey' }}>
-          Example of SQLite Database in React Native
-        </Text>
-        <Text style={{ fontSize: 16, textAlign: 'center', color: 'grey' }}>
-          www.aboutreact.com
+          Deletando o funcionário {inputFuncId}
         </Text>
       </View>
     </SafeAreaView>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   ScrollView,
@@ -11,13 +11,60 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import { sha256 } from 'react-native-sha256';
 import Mytextinput from './components/Mytextinput';
 import Mybutton from './components/Mybutton';
+import { UserContext } from './components/UserContext';
 
 const db = openDatabase({ name: 'UserDatabase.db' });
 
 const Login = ({ navigation }) => {
+  useEffect(() => {
+    db.transaction((txn) => {
+      txn.executeSql(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='table_func'",
+        [],
+        (tx, res) => {
+          console.log('item:', res.rows);
+          if (res.rows.length === 0) {
+            txn.executeSql('DROP TABLE IF EXISTS table_func', []);
+            txn.executeSql(
+              'CREATE TABLE IF NOT EXISTS table_func(func_id INTEGER PRIMARY KEY AUTOINCREMENT,'
+              + ' func_name VARCHAR(20),'
+              + ' func_contact INT(10),'
+              + ' func_address VARCHAR(255),'
+              + ' user_id INTEGER)',
+              [],
+            );
+          }
+        },
+      );
+      txn.executeSql(
+        'SELECT name FROM sqlite_master '
+        + "WHERE type='table' AND name='table_users'",
+        [],
+        (tx, res) => {
+          console.log('item:', res.rows);
+          if (res.rows.length === 0) {
+            txn.executeSql('DROP TABLE IF EXISTS table_users', []);
+            txn.executeSql(
+              'CREATE TABLE IF NOT EXISTS table_users('
+              + 'user_id INTEGER PRIMARY KEY AUTOINCREMENT, '
+              + 'user_name VARCHAR(20), user_email VARCHAR(255), '
+              + 'user_password VARCHAR(255))',
+              [],
+            );
+          }
+        },
+      );
+    });
+  }, []);
+
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const uid = useContext(UserContext);
+  const [ui2, setUi2] = useState('');
 
+  useEffect(() => {
+    setUi2('abacate');
+  }, []);
   const verifyLogin = async () => {
     if (!userName) {
       alert('Informe um nome de usuário');
@@ -28,32 +75,29 @@ const Login = ({ navigation }) => {
       return;
     }
 
-    try {
-      const a = await sha256(password);
-      console.log(a);
-    } catch (e) {
-      console.log(e);
-    }
-
+    const hasedPass = await sha256(password);
     db.transaction((tx) => {
       tx.executeSql(
-        'SELECT * FROM table_users (user_name, user_password) WHERE (user_name = ? AND user_password = ?)',
-        [userName, password],
-        (tx, results) => {
-          console.log('Results', results.rowsAffected);
-          if (results.rowsAffected > 0) {
+        'SELECT * FROM table_users where user_name = ? AND user_password = ?',
+        [userName, hasedPass],
+        (tx2, results) => {
+          if (results.rows.item(0)) {
             Alert.alert(
-              'Success',
-              'You are Registered Successfully',
+              'Successo',
+              'Login realizado com sucesso',
               [
                 {
                   text: 'Ok',
-                  onPress: () => navigation.navigate('HomeScreen'),
+                  onPress: () => {
+                    console.log(uid);
+                    setUi2('123');
+                    navigation.navigate('HomeScreen');
+                  },
                 },
               ],
               { cancelable: false },
             );
-          } else alert('Registration Failed');
+          } else alert('Usuário Inválido');
         },
       );
     });
@@ -64,39 +108,41 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1, backgroundColor: 'white' }}>
-        <View style={{ flex: 1 }}>
-          <ScrollView keyboardShouldPersistTaps="handled">
-            <KeyboardAvoidingView
-              behavior="padding"
-              style={{ flex: 1, justifyContent: 'space-between' }}
-            >
-              <Mytextinput
-                placeholder="UserName"
-                onChangeText={(e) => setUserName(e)}
-                style={{ padding: 10 }}
-              />
-              <Mytextinput
-                placeholder="Senha"
-                onChangeText={(e) => setPassword(e)}
-                maxLength={10}
-                secure
-                keyboardType="numeric"
-                style={{ padding: 10 }}
-              />
+    <UserContext.Provider value={ui2}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+          <View style={{ flex: 1 }}>
+            <ScrollView keyboardShouldPersistTaps="handled">
+              <KeyboardAvoidingView
+                behavior="padding"
+                style={{ flex: 1, justifyContent: 'space-between' }}
+              >
+                <Mytextinput
+                  placeholder="UserName"
+                  onChangeText={(e) => setUserName(e)}
+                  style={{ padding: 10 }}
+                />
+                <Mytextinput
+                  placeholder="Senha"
+                  onChangeText={(e) => setPassword(e)}
+                  maxLength={10}
+                  secure
+                  keyboardType="numeric"
+                  style={{ padding: 10 }}
+                />
 
-              <Mybutton title="Entrar" customClick={verifyLogin} />
-            </KeyboardAvoidingView>
-          </ScrollView>
+                <Mybutton title="Entrar" customClick={verifyLogin} />
+              </KeyboardAvoidingView>
+            </ScrollView>
+          </View>
+
+          <Text style={{ fontSize: 18, textAlign: 'center', color: 'grey' }}>
+            Não tem cadastro?
+          </Text>
+          <Mybutton title="Cadastre-se" customClick={register} />
         </View>
-
-        <Text style={{ fontSize: 18, textAlign: 'center', color: 'grey' }}>
-          Não tem cadastro?
-        </Text>
-        <Mybutton title="Cadastre-se" customClick={register} />
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </UserContext.Provider>
   );
 };
 

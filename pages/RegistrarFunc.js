@@ -13,31 +13,33 @@ import Mybutton from './components/Mybutton';
 
 const db = openDatabase({ name: 'UserDatabase.db' });
 
+
+
 const RegistrarFunc = ({ navigation }) => {
-  const [userName, setUserName] = useState('');
-  const [userContact, setUserContact] = useState('');
-  const [userAddress, setUserAddress] = useState('');
+  const [funcName, setUserName] = useState('');
+  const [funcContact, setUserContact] = useState('');
+  const [funcAddress, setUserAddress] = useState('');
 
   const registerUser = () => {
-    console.log(userName, userContact, userAddress);
+    console.log(funcName, funcContact, funcAddress);
 
-    if (!userName) {
+    if (!funcName) {
       alert('Please fill name');
       return;
     }
-    if (!userContact) {
+    if (!funcContact) {
       alert('Please fill Contact Number');
       return;
     }
-    if (!userAddress) {
+    if (!funcAddress) {
       alert('Please fill Address');
       return;
     }
 
     db.transaction((tx) => {
       tx.executeSql(
-        'INSERT INTO table_user (user_name, user_contact, user_address) VALUES (?,?,?)',
-        [userName, userContact, userAddress],
+        'INSERT INTO table_func (func_name, func_contact, func_address) VALUES (?,?,?)',
+        [funcName, funcContact, funcAddress],
         (tx, results) => {
           console.log('Results', results.rowsAffected);
           if (results.rowsAffected > 0) {
@@ -69,19 +71,19 @@ const RegistrarFunc = ({ navigation }) => {
             >
               <Mytextinput
                 placeholder="Enter Name"
-                onChangeText={(userName) => setUserName(userName)}
+                onChangeText={(e) => setUserName(e)}
                 style={{ padding: 10 }}
               />
               <Mytextinput
                 placeholder="Enter Contact No"
-                onChangeText={(userContact) => setUserContact(userContact)}
+                onChangeText={(e) => setUserContact(e)}
                 maxLength={10}
                 keyboardType="numeric"
                 style={{ padding: 10 }}
               />
               <Mytextinput
                 placeholder="Enter Address"
-                onChangeText={(userAddress) => setUserAddress(userName)}
+                onChangeText={(e) => setUserAddress(e)}
                 maxLength={225}
                 numberOfLines={5}
                 multiline
@@ -92,10 +94,7 @@ const RegistrarFunc = ({ navigation }) => {
           </ScrollView>
         </View>
         <Text style={{ fontSize: 18, textAlign: 'center', color: 'grey' }}>
-          Example of SQLite Database in React Native
-        </Text>
-        <Text style={{ fontSize: 16, textAlign: 'center', color: 'grey' }}>
-          www.aboutreact.com
+          Registro de um novo funcionário
         </Text>
       </View>
     </SafeAreaView>

@@ -11,7 +11,7 @@ const VizualizarTodosFunc = () => {
 
   useEffect(() => {
     db.transaction((tx) => {
-      tx.executeSql('SELECT * FROM table_user', [], (tx, results) => {
+      tx.executeSql('SELECT * FROM table_func', [], (tx, results) => {
         const temp = [];
         for (let i = 0; i < results.rows.length; ++i) temp.push(results.rows.item(i));
         setFlatListItems(temp);
@@ -27,24 +27,24 @@ const VizualizarTodosFunc = () => {
 
   const listItemView = (item) => (
     <View
-      key={item.user_id}
+      key={item.func_id}
       style={{ backgroundColor: 'white', padding: 20 }}
     >
       <Text>
-        Id:
-        {item.user_id}
+        Id do Funcionário:
+        {item.func_id}
       </Text>
       <Text>
-        Name:
-        {item.user_name}
+        Nome:
+        {item.func_name}
       </Text>
       <Text>
-        Contact:
-        {item.user_contact}
+        Contato:
+        {item.func_contact}
       </Text>
       <Text>
-        Address:
-        {item.user_address}
+        Endereço:
+        {item.func_address}
       </Text>
     </View>
   );
@@ -61,10 +61,7 @@ const VizualizarTodosFunc = () => {
           />
         </View>
         <Text style={{ fontSize: 18, textAlign: 'center', color: 'grey' }}>
-          Example of SQLite Database in React Native
-        </Text>
-        <Text style={{ fontSize: 16, textAlign: 'center', color: 'grey' }}>
-          www.aboutreact.com
+          Vizulizar todos os funcionarios
         </Text>
       </View>
     </SafeAreaView>

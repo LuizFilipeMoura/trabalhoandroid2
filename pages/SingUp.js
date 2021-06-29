@@ -17,15 +17,16 @@ const db = openDatabase({ name: 'UserDatabase.db' });
 const SignUp = ({ navigation }) => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
 
-  const registerUser = () => {
+  const registerUser = async () => {
     if (!userName) {
       alert('Informe um nome de usuário');
       return;
     }
     if (password !== repeatPassword) {
-      alert('Senhas nâo conferem');
+      alert('Senhas nâo estão iguais');
       return;
     }
     if (!password) {
@@ -33,10 +34,25 @@ const SignUp = ({ navigation }) => {
       return;
     }
 
+    const validateEmail = (emailAdress) => {
+      const regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if (emailAdress.match(regexEmail)) {
+        return true;
+      }
+      return false;
+    };
+
+    if (!validateEmail(email)) {
+      alert('Email invalido');
+      return;
+    }
+
+    const hasedPass = await sha256(password);
+
     db.transaction((tx) => {
       tx.executeSql(
-        'INSERT INTO table_user (user_name, user_password, user_email) VALUES (?,?,?)',
-        [userName, password],
+        'INSERT INTO table_users ( user_name, user_email , user_password) VALUES (?,?,?)',
+        [userName, email, hasedPass],
         (tx, results) => {
           console.log('Results', results.rowsAffected);
           if (results.rowsAffected > 0) {
@@ -72,6 +88,11 @@ const SignUp = ({ navigation }) => {
                 style={{ padding: 10 }}
               />
               <Mytextinput
+                placeholder="Email"
+                onChangeText={(e) => setEmail(e)}
+                style={{ padding: 10 }}
+              />
+              <Mytextinput
                 placeholder="Senha"
                 onChangeText={(e) => setPassword(e)}
                 maxLength={10}
@@ -92,7 +113,7 @@ const SignUp = ({ navigation }) => {
           </ScrollView>
         </View>
         <Text style={{ fontSize: 18, textAlign: 'center', color: 'grey' }}>
-          Example of SQLite Database in React Native
+          Cadastro de usuário
         </Text>
       </View>
     </SafeAreaView>

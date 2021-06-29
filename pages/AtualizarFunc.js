@@ -26,7 +26,6 @@ const AtualizarFunc = ({ navigation }) => {
   };
 
   const searchFunc = () => {
-    console.log(inputFuncId);
     db.transaction((tx) => {
       tx.executeSql(
         'SELECT * FROM table_func where func_id = ?',
@@ -35,6 +34,7 @@ const AtualizarFunc = ({ navigation }) => {
           const len = results.rows.length;
           if (len > 0) {
             const res = results.rows.item(0);
+            console.log(address)
             updateAllStates(res.func_name, res.func_contact, res.func_address);
           } else {
             alert('No func found');
@@ -45,22 +45,22 @@ const AtualizarFunc = ({ navigation }) => {
     });
   };
   const updateFunc = () => {
-    console.log(inputFuncId, funcName, funcContact, funcAddress);
+    // console.log(inputFuncId, funcName, funcContact, funcAddress);
 
     if (!inputFuncId) {
-      alert('Please fill Func id');
+      alert('Adicione a Id de um funcionário');
       return;
     }
     if (!funcName) {
-      alert('Please fill name');
+      alert('Adicione o nome do Funcionário');
       return;
     }
     if (!funcContact) {
-      alert('Please fill Contact Number');
+      alert('Adicione o contato');
       return;
     }
     if (!funcAddress) {
-      alert('Please fill Address');
+      alert('Adicione o endereço');
       return;
     }
 
@@ -98,19 +98,19 @@ const AtualizarFunc = ({ navigation }) => {
               style={{ flex: 1, justifyContent: 'space-between' }}
             >
               <Mytextinput
-                placeholder="Enter Func Id"
+                placeholder="Id do Funcionário"
                 style={{ padding: 10 }}
                 onChangeText={(inputFuncId) => setInputFuncId(inputFuncId)}
               />
               <Mybutton title="Search Func" customClick={searchFunc} />
               <Mytextinput
-                placeholder="Enter Name"
+                placeholder="Nome"
                 value={funcName}
                 style={{ padding: 10 }}
                 onChangeText={(funcName) => setFuncName(funcName)}
               />
               <Mytextinput
-                placeholder="Enter Contact No"
+                placeholder="Contato"
                 value={`${funcContact}`}
                 onChangeText={(funcContact) => setFuncContact(funcContact)}
                 maxLength={10}
@@ -119,7 +119,7 @@ const AtualizarFunc = ({ navigation }) => {
               />
               <Mytextinput
                 value={funcAddress}
-                placeholder="Enter Address"
+                placeholder="Endereço"
                 onChangeText={(funcAddress) => setFuncAddress(funcAddress)}
                 maxLength={225}
                 numberOfLines={5}
@@ -131,10 +131,7 @@ const AtualizarFunc = ({ navigation }) => {
           </ScrollView>
         </View>
         <Text style={{ fontSize: 18, textAlign: 'center', color: 'grey' }}>
-          Example of SQLite Database in React Native
-        </Text>
-        <Text style={{ fontSize: 16, textAlign: 'center', color: 'grey' }}>
-          www.aboutreact.com
+          Editando o funcionario {inputFuncId}
         </Text>
       </View>
     </SafeAreaView>
