@@ -9,12 +9,16 @@ import {
 } from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
 import { sha256 } from 'react-native-sha256';
+import { Image } from 'react-native-reanimated';
 import Mytextinput from './components/Mytextinput';
 import Mybutton from './components/Mybutton';
+import { useAppContext } from './components/AppContext';
 
 const db = openDatabase({ name: 'UserDatabase.db' });
 
 const SignUp = ({ navigation }) => {
+  const context = useAppContext();
+
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -31,6 +35,10 @@ const SignUp = ({ navigation }) => {
     }
     if (!password) {
       alert('Informe uma senha');
+      return;
+    }
+    if (password.length > 6) {
+      alert('A senha deve ter pelo menos 6 caracteres');
       return;
     }
 
@@ -73,6 +81,10 @@ const SignUp = ({ navigation }) => {
     });
   };
 
+  const tirarFoto = () => {
+    navigation.navigate('Camera');
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1, backgroundColor: 'white' }}>
@@ -108,7 +120,10 @@ const SignUp = ({ navigation }) => {
                 keyboardType="numeric"
                 style={{ padding: 10 }}
               />
-              <Mybutton title="Submit" customClick={registerUser} />
+              {!context.photoUrl && (<Mybutton title="Tirar Foto" customClick={tirarFoto} />) }
+              {console.log(context.photoUrl.toString())}
+              {!!context.photoUrl && (<Image source={context.photoUrl.toString()} style={{ height: 200, width: 250, resizeMode: 'stretch' }} />) }
+              <Mybutton title="Cadastrar" customClick={registerUser} />
             </KeyboardAvoidingView>
           </ScrollView>
         </View>

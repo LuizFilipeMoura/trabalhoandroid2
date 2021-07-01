@@ -5,17 +5,19 @@ import {
 import { openDatabase } from 'react-native-sqlite-storage';
 import Mytextinput from './components/Mytextinput';
 import Mybutton from './components/Mybutton';
+import {useAppContext} from './components/AppContext';
 
 const db = openDatabase({ name: 'UserDatabase.db' });
 
 const DeletarFunc = ({ navigation }) => {
   const [inputFuncId, setInputFuncId] = useState('');
+  const context = useAppContext();
 
   const deleteFunc = () => {
     db.transaction((tx) => {
       tx.executeSql(
-        'DELETE FROM  table_func where func_id=?',
-        [inputFuncId],
+        'DELETE FROM  table_func where func_id=? and user_id =?',
+        [inputFuncId, context.uid],
         // eslint-disable-next-line no-shadow
         (tx, results) => {
           console.log('Results', results.rowsAffected);

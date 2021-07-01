@@ -3,19 +3,22 @@ import {
   FlatList, Text, View, SafeAreaView,
 } from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
+import { useAppContext } from './components/AppContext';
 
 const db = openDatabase({ name: 'UserDatabase.db' });
 
 const VizualizarTodosFunc = () => {
   const [flatListItems, setFlatListItems] = useState([]);
+  const context = useAppContext();
 
   useEffect(() => {
     db.transaction((tx) => {
-      tx.executeSql('SELECT * FROM table_func', [], (tx, results) => {
-        const temp = [];
-        for (let i = 0; i < results.rows.length; ++i) temp.push(results.rows.item(i));
-        setFlatListItems(temp);
-      });
+      tx.executeSql('SELECT * FROM table_func where user_id = ?', [context.uid],
+        (tx, results) => {
+          const temp = [];
+          for (let i = 0; i < results.rows.length; ++i) temp.push(results.rows.item(i));
+          setFlatListItems(temp);
+        });
     });
   }, []);
 

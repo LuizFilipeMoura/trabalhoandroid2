@@ -3,20 +3,21 @@ import { Text, View, SafeAreaView } from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
 import Mytextinput from './components/Mytextinput';
 import Mybutton from './components/Mybutton';
+import {useAppContext} from './components/AppContext';
 
 const db = openDatabase({ name: 'UserDatabase.db' });
 
 const VizualizarFuncPorID = () => {
   const [inputUserId, setInputUserId] = useState('');
   const [funcData, setUserData] = useState({});
+  const context = useAppContext();
 
   const searchUser = () => {
-    console.log(inputUserId);
     setUserData({});
     db.transaction((tx) => {
       tx.executeSql(
-        'SELECT * FROM table_func where func_id = ?',
-        [inputUserId],
+        'SELECT * FROM table_func where func_id = ? and user_id =?',
+        [inputUserId, context.uid],
         (tx, results) => {
           const len = results.rows.length;
           console.log('len', len);

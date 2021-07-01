@@ -11,11 +11,14 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import { sha256 } from 'react-native-sha256';
 import Mytextinput from './components/Mytextinput';
 import Mybutton from './components/Mybutton';
-import { UserContext } from './components/UserContext';
+import { useAppContext } from './components/AppContext';
+import Camera from './components/Camera';
 
 const db = openDatabase({ name: 'UserDatabase.db' });
 
 const Login = ({ navigation }) => {
+  const context = useAppContext();
+
   useEffect(() => {
     db.transaction((txn) => {
       txn.executeSql(
@@ -59,12 +62,7 @@ const Login = ({ navigation }) => {
 
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
-  const uid = useContext(UserContext);
-  const [ui2, setUi2] = useState('');
 
-  useEffect(() => {
-    setUi2('abacate');
-  }, []);
   const verifyLogin = async () => {
     if (!userName) {
       alert('Informe um nome de usuário');
@@ -89,8 +87,7 @@ const Login = ({ navigation }) => {
                 {
                   text: 'Ok',
                   onPress: () => {
-                    console.log(uid);
-                    setUi2('123');
+                    context.setUid(results.rows.item(0).user_id);
                     navigation.navigate('HomeScreen');
                   },
                 },
@@ -108,41 +105,38 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <UserContext.Provider value={ui2}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={{ flex: 1, backgroundColor: 'white' }}>
-          <View style={{ flex: 1 }}>
-            <ScrollView keyboardShouldPersistTaps="handled">
-              <KeyboardAvoidingView
-                behavior="padding"
-                style={{ flex: 1, justifyContent: 'space-between' }}
-              >
-                <Mytextinput
-                  placeholder="UserName"
-                  onChangeText={(e) => setUserName(e)}
-                  style={{ padding: 10 }}
-                />
-                <Mytextinput
-                  placeholder="Senha"
-                  onChangeText={(e) => setPassword(e)}
-                  maxLength={10}
-                  secure
-                  keyboardType="numeric"
-                  style={{ padding: 10 }}
-                />
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: 'white' }}>
+        <View style={{ flex: 1 }}>
+          <ScrollView keyboardShouldPersistTaps="handled">
+            <KeyboardAvoidingView
+              behavior="padding"
+              style={{ flex: 1, justifyContent: 'space-between' }}
+            >
+              <Mytextinput
+                placeholder="UserName"
+                onChangeText={(e) => setUserName(e)}
+                style={{ padding: 10 }}
+              />
+              <Mytextinput
+                placeholder="Senha"
+                onChangeText={(e) => setPassword(e)}
+                maxLength={10}
+                secure
+                keyboardType="numeric"
+                style={{ padding: 10 }}
+              />
 
-                <Mybutton title="Entrar" customClick={verifyLogin} />
-              </KeyboardAvoidingView>
-            </ScrollView>
-          </View>
-
-          <Text style={{ fontSize: 18, textAlign: 'center', color: 'grey' }}>
-            Não tem cadastro?
-          </Text>
-          <Mybutton title="Cadastre-se" customClick={register} />
+              <Mybutton title="Entrar" customClick={verifyLogin} />
+            </KeyboardAvoidingView>
+          </ScrollView>
         </View>
-      </SafeAreaView>
-    </UserContext.Provider>
+        <Text style={{ fontSize: 18, textAlign: 'center', color: 'grey' }}>
+          Não tem cadastro?
+        </Text>
+        <Mybutton title="Cadastre-se" customClick={register} />
+      </View>
+    </SafeAreaView>
   );
 };
 

@@ -10,6 +10,7 @@ import {
 import { openDatabase } from 'react-native-sqlite-storage';
 import Mytextinput from './components/Mytextinput';
 import Mybutton from './components/Mybutton';
+import {useAppContext} from './components/AppContext';
 
 const db = openDatabase({ name: 'UserDatabase.db' });
 
@@ -19,6 +20,7 @@ const RegistrarFunc = ({ navigation }) => {
   const [funcName, setUserName] = useState('');
   const [funcContact, setUserContact] = useState('');
   const [funcAddress, setUserAddress] = useState('');
+  const context = useAppContext();
 
   const registerUser = () => {
     console.log(funcName, funcContact, funcAddress);
@@ -38,8 +40,8 @@ const RegistrarFunc = ({ navigation }) => {
 
     db.transaction((tx) => {
       tx.executeSql(
-        'INSERT INTO table_func (func_name, func_contact, func_address) VALUES (?,?,?)',
-        [funcName, funcContact, funcAddress],
+        'INSERT INTO table_func (func_name, func_contact, func_address, user_id) VALUES (?,?,?,?)',
+        [funcName, funcContact, funcAddress, context.uid],
         (tx, results) => {
           console.log('Results', results.rowsAffected);
           if (results.rowsAffected > 0) {

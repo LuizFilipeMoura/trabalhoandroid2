@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   ScrollView,
@@ -10,10 +10,13 @@ import {
 import { openDatabase } from 'react-native-sqlite-storage';
 import Mytextinput from './components/Mytextinput';
 import Mybutton from './components/Mybutton';
+import { useAppContext } from './components/AppContext';
 
 const db = openDatabase({ name: 'UserDatabase.db' });
 
 const AtualizarFunc = ({ navigation }) => {
+
+
   const [inputFuncId, setInputFuncId] = useState('');
   const [funcName, setFuncName] = useState('');
   const [funcContact, setFuncContact] = useState('');
@@ -25,16 +28,18 @@ const AtualizarFunc = ({ navigation }) => {
     setFuncAddress(address);
   };
 
+  const context = useAppContext();
+
   const searchFunc = () => {
     db.transaction((tx) => {
       tx.executeSql(
-        'SELECT * FROM table_func where func_id = ?',
-        [inputFuncId],
+        'SELECT * FROM table_func where func_id = ? AND user_id = ?',
+        [inputFuncId, context.uid],
         (tx, results) => {
           const len = results.rows.length;
           if (len > 0) {
             const res = results.rows.item(0);
-            console.log(address)
+            console.log(address);
             updateAllStates(res.func_name, res.func_contact, res.func_address);
           } else {
             alert('No func found');
@@ -45,8 +50,6 @@ const AtualizarFunc = ({ navigation }) => {
     });
   };
   const updateFunc = () => {
-    // console.log(inputFuncId, funcName, funcContact, funcAddress);
-
     if (!inputFuncId) {
       alert('Adicione a Id de um funcionário');
       return;
@@ -100,19 +103,19 @@ const AtualizarFunc = ({ navigation }) => {
               <Mytextinput
                 placeholder="Id do Funcionário"
                 style={{ padding: 10 }}
-                onChangeText={(inputFuncId) => setInputFuncId(inputFuncId)}
+                onChangeText={(e) => setInputFuncId(e)}
               />
               <Mybutton title="Search Func" customClick={searchFunc} />
               <Mytextinput
                 placeholder="Nome"
                 value={funcName}
                 style={{ padding: 10 }}
-                onChangeText={(funcName) => setFuncName(funcName)}
+                onChangeText={(e) => setFuncName(e)}
               />
               <Mytextinput
                 placeholder="Contato"
                 value={`${funcContact}`}
-                onChangeText={(funcContact) => setFuncContact(funcContact)}
+                onChangeText={(e) => setFuncContact(e)}
                 maxLength={10}
                 style={{ padding: 10 }}
                 keyboardType="numeric"
@@ -120,7 +123,7 @@ const AtualizarFunc = ({ navigation }) => {
               <Mytextinput
                 value={funcAddress}
                 placeholder="Endereço"
-                onChangeText={(funcAddress) => setFuncAddress(funcAddress)}
+                onChangeText={(e) => setFuncAddress(e)}
                 maxLength={225}
                 numberOfLines={5}
                 multiline
@@ -131,7 +134,9 @@ const AtualizarFunc = ({ navigation }) => {
           </ScrollView>
         </View>
         <Text style={{ fontSize: 18, textAlign: 'center', color: 'grey' }}>
-          Editando o funcionario {inputFuncId}
+          Editando o funcionario
+          {' '}
+          {inputFuncId}
         </Text>
       </View>
     </SafeAreaView>
