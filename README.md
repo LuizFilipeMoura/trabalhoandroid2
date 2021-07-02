@@ -4,6 +4,9 @@ Além dos dados pessoais (nome, telefone e endereço) adiciona-se também uma fo
 A aplicação foi desenvolvida em javascript utilizando o framework React Native e o banco de dados Sqlite.
 
 Alunos:
+
 CAIO FELIPE NARCISO TORRES 201819060721
+
 LUIZ FILIPE DE MOURA 20191906294
+
 THIAGO FRANCELINO DE SOUSA DA SILVA 201819060420
