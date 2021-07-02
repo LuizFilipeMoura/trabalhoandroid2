@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  FlatList, Text, View, SafeAreaView,
+  FlatList, Text, View, SafeAreaView, Image, StyleSheet,
 } from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
 import { useAppContext } from './components/AppContext';
@@ -27,7 +27,16 @@ const VizualizarTodosFunc = () => {
       style={{ height: 0.2, width: '100%', backgroundColor: '#808080' }}
     />
   );
-
+  const styles = StyleSheet.create({
+    container: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    logo: {
+      width: 300,
+      height: 400,
+    },
+  });
   const listItemView = (item) => (
     <View
       key={item.func_id}
@@ -49,6 +58,18 @@ const VizualizarTodosFunc = () => {
         Endereço:
         {item.func_address}
       </Text>
+      <View style={styles.container}>
+        {!!item.photo_url && (
+          <>
+            <Image
+              source={{ uri: item.photo_url.toString() }}
+              style={{
+                height: 160, width: 160, resizeMode: 'stretch', alignItems: 'center',
+              }}
+            />
+          </>
+        ) }
+      </View>
     </View>
   );
 

@@ -39,10 +39,9 @@ const AtualizarFunc = ({ navigation }) => {
           const len = results.rows.length;
           if (len > 0) {
             const res = results.rows.item(0);
-            console.log(address);
             updateAllStates(res.func_name, res.func_contact, res.func_address);
           } else {
-            alert('No func found');
+            alert('Funcionario nao econtrado');
             updateAllStates('', '', '');
           }
         },
@@ -72,7 +71,6 @@ const AtualizarFunc = ({ navigation }) => {
         'UPDATE table_func set func_name=?, func_contact=? , func_address=? where func_id=?',
         [funcName, funcContact, funcAddress, inputFuncId],
         (tx, results) => {
-          console.log('Results', results.rowsAffected);
           if (results.rowsAffected > 0) {
             Alert.alert(
               'Success',

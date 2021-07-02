@@ -20,11 +20,10 @@ const DeletarFunc = ({ navigation }) => {
         [inputFuncId, context.uid],
         // eslint-disable-next-line no-shadow
         (tx, results) => {
-          console.log('Results', results.rowsAffected);
           if (results.rowsAffected > 0) {
             Alert.alert(
               'Success',
-              'Func deleted successfully',
+              'Funcionario deletado com sucesso',
               [
                 {
                   text: 'Ok',

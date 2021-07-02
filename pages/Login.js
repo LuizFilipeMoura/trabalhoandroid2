@@ -12,7 +12,6 @@ import { sha256 } from 'react-native-sha256';
 import Mytextinput from './components/Mytextinput';
 import Mybutton from './components/Mybutton';
 import { useAppContext } from './components/AppContext';
-import Camera from './components/Camera';
 
 const db = openDatabase({ name: 'UserDatabase.db' });
 
@@ -22,10 +21,27 @@ const Login = ({ navigation }) => {
   useEffect(() => {
     db.transaction((txn) => {
       txn.executeSql(
+        'SELECT name FROM sqlite_master '
+        + "WHERE type='table' AND name='table_users'",
+        [],
+        (tx, res) => {
+          if (res.rows.length === 0) {
+            txn.executeSql('DROP TABLE IF EXISTS table_users', []);
+            txn.executeSql(
+              'CREATE TABLE IF NOT EXISTS table_users('
+              + 'user_id INTEGER PRIMARY KEY AUTOINCREMENT, '
+              + 'user_name VARCHAR(20), '
+              + 'user_email VARCHAR(255), '
+              + 'user_password VARCHAR(255))',
+              [],
+            );
+          }
+        },
+      );
+      txn.executeSql(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='table_func'",
         [],
         (tx, res) => {
-          console.log('item:', res.rows);
           if (res.rows.length === 0) {
             txn.executeSql('DROP TABLE IF EXISTS table_func', []);
             txn.executeSql(
@@ -33,25 +49,8 @@ const Login = ({ navigation }) => {
               + ' func_name VARCHAR(20),'
               + ' func_contact INT(10),'
               + ' func_address VARCHAR(255),'
+              + ' photo_url VARCHAR(255),'
               + ' user_id INTEGER)',
-              [],
-            );
-          }
-        },
-      );
-      txn.executeSql(
-        'SELECT name FROM sqlite_master '
-        + "WHERE type='table' AND name='table_users'",
-        [],
-        (tx, res) => {
-          console.log('item:', res.rows);
-          if (res.rows.length === 0) {
-            txn.executeSql('DROP TABLE IF EXISTS table_users', []);
-            txn.executeSql(
-              'CREATE TABLE IF NOT EXISTS table_users('
-              + 'user_id INTEGER PRIMARY KEY AUTOINCREMENT, '
-              + 'user_name VARCHAR(20), user_email VARCHAR(255), '
-              + 'user_password VARCHAR(255))',
               [],
             );
           }
@@ -118,12 +117,12 @@ const Login = ({ navigation }) => {
                 onChangeText={(e) => setUserName(e)}
                 style={{ padding: 10 }}
               />
+
               <Mytextinput
                 placeholder="Senha"
                 onChangeText={(e) => setPassword(e)}
                 maxLength={10}
                 secure
-                keyboardType="numeric"
                 style={{ padding: 10 }}
               />
 

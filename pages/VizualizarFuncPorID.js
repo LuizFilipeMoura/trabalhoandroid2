@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, SafeAreaView } from 'react-native';
+import {Text, View, SafeAreaView, Image, StyleSheet} from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
 import Mytextinput from './components/Mytextinput';
 import Mybutton from './components/Mybutton';
@@ -20,16 +20,26 @@ const VizualizarFuncPorID = () => {
         [inputUserId, context.uid],
         (tx, results) => {
           const len = results.rows.length;
-          console.log('len', len);
           if (len > 0) {
             setUserData(results.rows.item(0));
           } else {
-            alert('No func found');
+            alert('Nenhum funcionario encontrado');
           }
         },
       );
     });
   };
+
+  const styles = StyleSheet.create({
+    container: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    logo: {
+      width: 300,
+      height: 400,
+    },
+  });
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -58,6 +68,21 @@ const VizualizarFuncPorID = () => {
               Endereço:
               {funcData.func_address}
             </Text>
+            <Text>
+              Foto:
+            </Text>
+            <View style={styles.container}>
+              {!!funcData.photo_url && (
+                <>
+                  <Image
+                    source={{ uri: funcData.photo_url.toString() }}
+                    style={{
+                      height: 160, width: 160, resizeMode: 'stretch', alignItems: 'center',
+                    }}
+                  />
+                </>
+              ) }
+            </View>
           </View>
         </View>
         <Text style={{ fontSize: 18, textAlign: 'center', color: 'grey' }}>

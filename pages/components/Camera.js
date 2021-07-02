@@ -1,6 +1,6 @@
-import React, { PureComponent, useRef } from 'react';
+import React, { useRef } from 'react';
 import {
-  AppRegistry, StyleSheet, Text, TouchableOpacity, View,
+  StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { useAppContext } from './AppContext';
@@ -14,7 +14,7 @@ const Camera = ({ navigation }) => {
       const options = { quality: 0.5, base64: true };
       const data = await camera.current.takePictureAsync(options);
       context.setPhotoUrl(data.uri);
-      navigation.navigate('SignUp');
+      navigation.navigate('RegisterFunc');
     }
   };
   return (
